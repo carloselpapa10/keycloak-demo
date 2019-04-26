@@ -1,12 +1,22 @@
 package com.keycloak.demokeycloak.keycloak;
 
+import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class WebController {
@@ -14,8 +24,23 @@ public class WebController {
     @Autowired
     private CustomerDAO customerDAO;
 
+    @Autowired
+    private ProductService productService;
+
     @GetMapping(path = "/")
     public String index() {
+        return "external";
+    }
+
+    @GetMapping(path = "/products")
+    @ResponseBody
+    public List<String> getProductsFromOtherService(){
+        return productService.getProducts();
+    }
+
+    @GetMapping(path = "/logout-app")
+    public String logout(HttpServletRequest request) throws ServletException{
+        request.logout();
         return "external";
     }
 
@@ -48,5 +73,18 @@ public class WebController {
         customer3.setName("Big LLC");
         customer3.setServiceRendered("Important services");
         customerDAO.save(customer3);
+    }
+
+}
+
+@Component
+class ProductService{
+
+    @Autowired
+    private KeycloakRestTemplate template;
+
+    public List<String> getProducts() {
+        ResponseEntity<String[]> response = template.getForEntity("http://localhost:8082/product/", String[].class);
+        return Arrays.asList(response.getBody());
     }
 }
