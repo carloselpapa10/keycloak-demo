@@ -25,3 +25,6 @@ To configure spring boot with Keycloack, follow this link (https://www.baeldung.
 
 Note: the POST request we need to establish to get access_token and refresh_token from keycloac uses x-www-form-urlencoded NOT Json.
 
+### MSc Carlos Avendaño
+[Linkedin](https://www.linkedin.com/in/carlos-alberto-avenda%C3%B1o-arango-534b0a137/)
+
